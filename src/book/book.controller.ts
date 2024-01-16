@@ -7,11 +7,13 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { BookService } from './book.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { Book } from './Schema/book.schema';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('book')
 export class BookController {
@@ -28,6 +30,7 @@ export class BookController {
   }
 
   @Post()
+  @UseGuards(AuthGuard())
   createBook(@Body() book: CreateBookDto): Promise<Book> {
     return this.bookService.createBook(book);
   }
