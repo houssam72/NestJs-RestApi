@@ -29,7 +29,7 @@ export class BookController {
   @Post()
   @UseGuards(AuthGuard())
   async createBook(@Body() book: CreateBookDto, @Req() req): Promise<Book> {
-    return this.bookService.create(book, req.user);
+    return this.bookService.create(book, req.user?._id);
   }
 
   @Get(':id')

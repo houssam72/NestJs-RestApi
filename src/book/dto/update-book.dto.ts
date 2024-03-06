@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { User } from '../../auth/schemas/user.schema';
+import mongoose from "mongoose";
 
 export class UpdateBookDto {
   @IsOptional()
@@ -30,5 +30,5 @@ export class UpdateBookDto {
   readonly category: Category;
 
   @IsEmpty({ message: 'You cannot pass user id' })
-  readonly user: User;
+  readonly user: mongoose.Types.ObjectId;
 }

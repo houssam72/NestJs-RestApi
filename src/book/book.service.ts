@@ -7,7 +7,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Book } from './schemas/book.schema';
 import { Query } from 'express-serve-static-core';
 import * as mongoose from 'mongoose';
-import { User } from '../auth/schemas/user.schema';
+import { CreateBookDto } from './dto/create-book.dto';
+import { UpdateBookDto } from './dto/update-book.dto';
 
 @Injectable()
 export class BookService {
@@ -36,8 +37,12 @@ export class BookService {
     return books;
   }
 
-  async create(book: Book, user: User): Promise<Book> {
-    const data = Object.assign(book, { user: user._id });
+  async create(
+    book: CreateBookDto,
+    userId: mongoose.Types.ObjectId,
+  ): Promise<Book> {
+    const data = Object.assign(book, { user: userId });
+
     const res = await this.bookModel.create(data);
     return res;
   }
@@ -55,11 +60,30 @@ export class BookService {
     return book;
   }
 
-  async updateById(id: string, book: Book): Promise<Book> {
+  async updateById(id: string, book: UpdateBookDto): Promise<Book> {
+    const isValid = mongoose.isValidObjectId(id);
+    if (!isValid) {
+      throw new BadRequestException('Please enter correct Id.');
+    }
+    const Book = await this.bookModel.findById(id);
+
+    if (!Book) {
+      throw new NotFoundException('Book not found');
+    }
+
     return this.bookModel.findByIdAndUpdate(id, book);
   }
 
   async deleteById(id: string) {
+    const isValid = mongoose.isValidObjectId(id);
+    if (!isValid) {
+      throw new BadRequestException('Please enter correct Id.');
+    }
+    const book = await this.bookModel.findById(id);
+
+    if (!book) {
+      throw new NotFoundException('Book not found');
+    }
     return this.bookModel.findByIdAndDelete(id);
   }
 }

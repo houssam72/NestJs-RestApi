@@ -6,7 +6,7 @@ import {
   IsNumber,
   IsString,
 } from 'class-validator';
-import { User } from '../../auth/schemas/user.schema';
+import mongoose from "mongoose";
 
 export class CreateBookDto {
   @IsNotEmpty()
@@ -30,5 +30,5 @@ export class CreateBookDto {
   readonly category: Category;
 
   @IsEmpty({ message: 'You cannot pass user id' })
-  readonly user: User;
+  readonly user: mongoose.Types.ObjectId;
 }
